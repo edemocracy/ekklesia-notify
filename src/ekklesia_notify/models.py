@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class Message(BaseModel):
     sender: str
+    recipient: str
     keep: bool = True
     sign: bool = True
     encrypt: bool = True
