@@ -4,13 +4,14 @@ from fastapi import FastAPI
 from ekklesia_notify.models import FreeformMessage, TemplatedMessage
 from ekklesia_notify import configure_logging
 from ekklesia_notify.transport.logging_dummy import LoggingDummyTransport
+from ekklesia_notify.transport.mail import MailTransport
 from ekklesia_notify.transport.matrix import MatrixTransport
 
 configure_logging()
 
 app = FastAPI()
 
-TRANSPORT = MatrixTransport
+TRANSPORT = MailTransport
 
 
 @app.get('/')
