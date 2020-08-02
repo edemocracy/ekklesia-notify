@@ -13,6 +13,8 @@ markdown = "^3.2.2"
 eliot-tree = "^19.0.1"
 pyyaml = "^5.3.1"
 endesive = "^1.5.10"
+pdbpp = "^0.10.2"
+eliot = "^1.12.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.3"

@@ -1,8 +1,9 @@
 import asyncio
+from typing import List
 from eliot import start_action, Message
 from nio.client.async_client import AsyncClient
 from ekklesia_notify.models import FreeformMessage, TemplatedMessage
-from ekklesia_notify.transport import Transport
+from ekklesia_notify.transport import Recipient, Transport
 from ekklesia_notify.lib.matrix import after_first_sync, get_or_create_direct_room, make_client, send, login
 
 
@@ -11,6 +12,10 @@ BODY_TEMPLATE = '''
 
 {content}
 '''.strip()
+
+
+class MatrixRecipient(Recipient):
+    matrix_ids: List[str]
 
 
 class MatrixTransport(Transport):
@@ -24,11 +29,14 @@ class MatrixTransport(Transport):
         await after_first_sync(cl)
         Message.log(transport="matrix", state="ready")
 
-    async def send_freeform_message(self, msg: FreeformMessage):
-        with start_action(transport="matrix", msg_type="freeform", **msg.dict()):
+    async def send_freeform_message(self, msg: FreeformMessage, recipient: MatrixRecipient):
+        with start_action(action_type="send_freeform_message", transport="matrix", **msg.dict()):
             body = BODY_TEMPLATE.format(**msg.dict())
-            room_id = await get_or_create_direct_room(self.cl, msg.recipient)
-            await send(self.cl, room_id, body)
+
+            for mxid in recipient['matrix_ids']:
+                with start_action(action_type="communicate", transport="matrix", mxid=mxid):
+                    room_id = await get_or_create_direct_room(self.cl, mxid)
+                    await send(self.cl, room_id, body)
 
     async def send_templated_message(self, msg: TemplatedMessage):
         with start_action(transport="matrix", msg_type="templated", **msg.dict()):

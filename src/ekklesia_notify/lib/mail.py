@@ -3,6 +3,7 @@ from email.utils import formatdate
 
 from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.serialization import pkcs12
+from eliot import log_call
 from endesive import email
 from smtplib import SMTP
 
@@ -32,7 +33,8 @@ def login(cl):
     cl.login(SMTP_USER, SMTP_PASSWORD)
 
 
-def send(cl: SMTP, subject: str, recipient: str, body: str) -> None:
+@log_call
+def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
 
     headers = HEADER_TEMPLATE.format(
         subject=subject,

@@ -109,24 +109,23 @@ async def send(cl: AsyncClient, room_id: str, body: str):
 
 
 @log_call
-async def get_or_create_direct_room(cl: AsyncClient, recipient: str) -> str:
+def find_room_id(cl, mxid):
+    for room_id, room in cl.rooms.items():
+        if mxid in room.users:
+            return room_id
 
-    mxid = f"@{recipient}:matrix.org"
-    room_alias_localpart = f"{recipient}-basisentscheid-test"
-    room_alias = f"#{room_alias_localpart}:matrix.org"
 
-    with start_action(action_type="resolve_room_alias", alias=room_alias) as action:
-        resp = await cl.room_resolve_alias(room_alias)
-        action.add_success_fields(response=resp)
+@log_call
+async def get_or_create_direct_room(cl: AsyncClient, mxid: str) -> str:
 
-    if isinstance(resp, RoomResolveAliasResponse):
-        room_id = resp.room_id
+    room_id = find_room_id(cl, mxid)
+
+    if room_id:
         Message.log(msg="using existing room", room=room_id)
         return room_id
 
-    with start_action(action_type="create_direct_room", recipient=recipient) as action:
+    with start_action(action_type="create_direct_room", recipient=mxid) as action:
         resp = await cl.room_create(
-            alias=room_alias_localpart,
             name="Benachrichtigungen",
             topic="Hier gibts Benachrichtigungen",
             federate=False,
