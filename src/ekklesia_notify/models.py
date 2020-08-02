@@ -1,27 +1,49 @@
-from typing import Any, Dict
+from enum import Enum
+from typing import Any, Dict, Union
 from pydantic import BaseModel
 
 
 class Message(BaseModel):
     sender: str
-    recipient: str
-    keep: bool = True
     sign: bool = True
     encrypt: bool = True
 
-class FreeformMessage(Message):
+
+class FreeformMessageTransport(Message):
+    subject: str
+    content: str
+
+
+class TemplatedMessageTransport(Message):
+    template: str
+    variables: Dict[str, Any]
+
+
+class FreeformMessage(FreeformMessageTransport):
     """
     Message with arbitrary content specified by sender.
     Connectors that don't support a separate subject should add it to the content,
     starting with the subject.
     """
-    subject: str
-    content: str
+    recipient_info: Union[str, Dict[str, Any]]
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "sender": "example_app",
+                "sign": True,
+                "encrypt": False,
+                "subject": "test message",
+                "content": "Just a test.\n\nTester",
+                "recipient_info": {
+                    "matrix": {"matrix_ids": ["@recipient:example.com"]},
+                    "mail": {"to": ["recipient@example.com"]}
+                }
+            }
+        }
 
-class TemplatedMessage(Message):
+class TemplatedMessage(TemplatedMessageTransport):
     """
-    Message with a predifined subject and content that may be modified by some variables.
+    Message with a predefined subject and content that may be modified by some variables.
     """
-    template: str
-    variables: Dict[str, Any]
+    recipient_info: str
