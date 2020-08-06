@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 from pydantic import BaseModel
 
 
 class Message(BaseModel):
-    sender: str
+    sender: Optional[str]
     sign: bool = True
     encrypt: bool = True
 
@@ -17,6 +17,21 @@ class FreeformMessageTransport(Message):
 class TemplatedMessageTransport(Message):
     template: str
     variables: Dict[str, Any]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "sender": "example_app",
+                "sign": True,
+                "encrypt": False,
+                "template": "example_notification",
+                "variables": {
+                    "subject": "An example notification",
+                    "date": "2020-08-22"
+                },
+                "recipient_info": "<encrypted string>"
+            }
+        }
 
 
 class FreeformMessage(FreeformMessageTransport):
