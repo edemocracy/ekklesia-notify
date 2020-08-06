@@ -7,9 +7,11 @@ from nio import AsyncClientConfig, MatrixRoom, RoomMessageText, AsyncClient, Log
 from eliot import log_call, start_action, Message
 import markdown
 from nio.event_builders.state_events import EnableEncryptionBuilder
-from nio.responses import RoomCreateResponse, RoomResolveAliasResponse
+from nio.responses import RoomCreateResponse
 
-from ekklesia_notify.matrix_settings import *
+from ekklesia_notify.settings import transport_settings
+
+settings = transport_settings['matrix']
 
 
 def make_client():
@@ -17,11 +19,11 @@ def make_client():
         encryption_enabled=True
     )
     return AsyncClient(
-        HOMESERVER,
-        MXID,
-        device_id=DEVICE_ID,
+        settings["homeserver"],
+        settings["mxid"],
+        device_id=settings["device_id"],
         config=client_config,
-        store_path=STORE_DIR)
+        store_path=settings["store_dir"])
 
 
 @log_call
@@ -31,7 +33,7 @@ def write_details_to_disk(resp: LoginResponse) -> None:
         Arguments:
             resp {LoginResponse} -- the successful client login response.
         """
-        with open(SESSION_DETAILS_FILE, "w") as f:
+        with open(settings["session_details_file"], "w") as f:
             json.dump({
                 "access_token": resp.access_token,
                 "device_id": resp.device_id,
@@ -46,9 +48,11 @@ async def login(cl) -> None:
     """
     # Restore the previous session if we can
     # See the "restore_login.py" example if you're not sure how this works
-    if os.path.exists(SESSION_DETAILS_FILE) and os.path.isfile(SESSION_DETAILS_FILE):
+    session_details_file = settings["session_details_file"]
+
+    if os.path.exists(session_details_file) and os.path.isfile(session_details_file):
         try:
-            with open(SESSION_DETAILS_FILE, "r") as f:
+            with open(session_details_file, "r") as f:
                 config = json.load(f)
                 cl.access_token = config['access_token']
                 cl.user_id = config['user_id']
@@ -66,7 +70,7 @@ async def login(cl) -> None:
     # We didn't restore a previous session, so we'll log in with a password
     if not cl.user_id or not cl.access_token or not cl.device_id:
         # this calls the login method defined in AsyncClient from nio
-        resp = await cl.login(PASSWORD)
+        resp = await cl.login(settings["password"])
 
         if isinstance(resp, LoginResponse):
             print("Logged in using a password; saving details to disk")

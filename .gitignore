@@ -1,5 +1,4 @@
-src/ekklesia_notify/matrix_settings.py
-src/ekklesia_notify/mail_settings.py
+src/ekklesia_notify/settings.py
 log.json
 *.pyc
 .settings
