@@ -7,7 +7,10 @@ from eliot import log_call
 from endesive import email
 from smtplib import SMTP
 
-from ekklesia_notify.mail_settings import *
+from ekklesia_notify.settings import transport_settings
+
+
+settings = transport_settings['mail']
 
 
 HEADER_TEMPLATE = '''
@@ -19,18 +22,19 @@ Auto-Submitted: auto-generated
 '''
 
 def load_smime_p12():
-    with open(CERT_P12, 'rb') as fp:
-        return pkcs12.load_key_and_certificates(fp.read(), CERT_PASSWORD.encode("utf8"), backends.default_backend())
+    with open(settings["cert_p12"], 'rb') as fp:
+        return pkcs12.load_key_and_certificates(
+            fp.read(), settings["cert_password"].encode("utf8"), backends.default_backend())
 
 
 def make_client() -> SMTP:
-    return SMTP(SMTP_SERVER, SMTP_PORT)
+    return SMTP(settings["smtp_server"], settings["smtp_port"])
 
 
 def login(cl):
     cl.ehlo()
     cl.starttls()
-    cl.login(SMTP_USER, SMTP_PASSWORD)
+    cl.login(settings["smtp_user"], settings["smtp_password"])
 
 
 @log_call
@@ -38,7 +42,7 @@ def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
 
     headers = HEADER_TEMPLATE.format(
         subject=subject,
-        sender=SENDER,
+        sender=settings["sender"],
         to=recipient,
         date=formatdate(localtime=True))
 
@@ -49,6 +53,6 @@ def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
     body = signed.decode("ascii")
     content = (headers + body).strip()
 
-    cl.sendmail(SENDER, recipient, content)
+    cl.sendmail(settings["sender"], recipient, content)
 
 
