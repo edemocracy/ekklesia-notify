@@ -14,13 +14,13 @@ class MailTransport(Transport):
 
     async def connect(self):
         self.cl = make_client()
-        login(self.cl)
+        await login(self.cl)
         Message.log(transport="mail", state="ready")
 
     async def send_freeform_message(self, msg: FreeformMessage, recipient: MailRecipient):
         with start_action(action_type="send_freeform_message", transport="mail", **msg.dict()):
             for to_addr in recipient['to'][:10]:
-                send(self.cl, to_addr, msg.subject, msg.content)
+                await send(self.cl, to_addr, msg.subject, msg.content)
 
     async def send_templated_message(self, msg: TemplatedMessage):
         with start_action(transport="mail", msg_type="templated", **msg.dict()):

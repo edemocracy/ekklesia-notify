@@ -5,7 +5,7 @@ from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.serialization import pkcs12
 from eliot import log_call
 from endesive import email
-from smtplib import SMTP
+from aiosmtplib import SMTP
 
 from ekklesia_notify.settings import transport_settings
 
@@ -31,14 +31,14 @@ def make_client() -> SMTP:
     return SMTP(settings["smtp_server"], settings["smtp_port"])
 
 
-def login(cl):
-    cl.ehlo()
-    cl.starttls()
-    cl.login(settings["smtp_user"], settings["smtp_password"])
+async def login(cl):
+    await cl.connect()
+    await cl.starttls()
+    await cl.login(settings["smtp_user"], settings["smtp_password"])
 
 
 @log_call
-def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
+async def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
 
     headers = HEADER_TEMPLATE.format(
         subject=subject,
@@ -53,6 +53,6 @@ def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
     body = signed.decode("ascii")
     content = (headers + body).strip()
 
-    cl.sendmail(settings["sender"], recipient, content)
+    await cl.sendmail(settings["sender"], recipient, content)
 
 
