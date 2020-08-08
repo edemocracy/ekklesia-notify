@@ -57,9 +57,14 @@ in rec {
         (p: { name = p.pname; value = p; })
         poetryPackages);
 
-  uvicorn = with python.pkgs; pkgs.writeScriptBin "uvicorn" ''
-    export PYTHONPATH=$PYTHONPATH:./src:${pythonPath}
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.openssl.out}/lib
+  uvicorn = with python.pkgs;
+  let
+    exportEnv = name: "export ${name}=\${${name}:+\${${name}}:}";
+
+   in pkgs.writeScriptBin "uvicorn" ''
+    ${exportEnv "PYTHONPATH"}./src:${pythonPath}
+    ${exportEnv "LD_LIBRARY_PATH"}${pkgs.openssl.out}/lib
+
     ${python.pkgs.uvicorn}/bin/uvicorn "$@"
   '';
 
