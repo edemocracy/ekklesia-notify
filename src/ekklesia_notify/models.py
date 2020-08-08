@@ -40,6 +40,7 @@ class FreeformMessage(FreeformMessageTransport):
     Connectors that don't support a separate subject should add it to the content,
     starting with the subject.
     """
+
     recipient_info: Union[str, Dict[str, Any]]
 
     class Config:
@@ -61,4 +62,5 @@ class TemplatedMessage(TemplatedMessageTransport):
     """
     Message with a predefined subject and content that may be modified by some variables.
     """
-    recipient_info: str
+
+    recipient_info: Union[str, Dict[str, Any]]

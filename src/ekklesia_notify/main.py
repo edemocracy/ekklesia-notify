@@ -4,7 +4,7 @@ from eliot import start_task
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from ekklesia_notify.lib.crypto import decode_recipient_info
-from ekklesia_notify.models import FreeformMessage, TemplatedMessage
+from ekklesia_notify.models import FreeformMessage, Message, TemplatedMessage
 from ekklesia_notify import configure_logging
 from ekklesia_notify.transport.logging_dummy import LoggingDummyTransport
 from ekklesia_notify.transport.mail import MailTransport
@@ -38,7 +38,7 @@ def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> st
             detail="incorrect username or password",
             headers={"WWW-Authenticate": "Basic"})
 
-    return credentials.username
+    return client_settings
 
 
 
@@ -48,19 +48,23 @@ def api_info():
 
 
 @app.post('/templated_message')
-async def send_templated_message(msg: TemplatedMessage, client_name: str = Depends(identify_client)):
+async def send_templated_message(msg: TemplatedMessage, client_settings = Depends(identify_client)):
 
     with start_task(task="send_templated_message"):
-        transport = TRANSPORT()
-        await transport.connect()
-        await transport.send_templated_message(msg)
-        await transport.disconnect()
+
+        recipient_info = decode_recipient_info(msg.recipient_info, msg.sender)
+
+        for transport_id, recipient in recipient_info.items():
+            transport = TRANSPORTS[transport_id]
+            await transport.connect()
+            await transport.send_templated_message(msg, recipient, client_settings)
+            await transport.disconnect()
 
     return {'msg_id': randint(0, 10000)}
 
 
 @app.post('/freeform_message')
-async def send_freeform_message(msg: FreeformMessage, client_name: str = Depends(identify_client)):
+async def send_freeform_message(msg: FreeformMessage, client_settings = Depends(identify_client)):
 
     with start_task(task="send_freeform_message"):
 
@@ -69,7 +73,7 @@ async def send_freeform_message(msg: FreeformMessage, client_name: str = Depends
         for transport_id, recipient in recipient_info.items():
             transport = TRANSPORTS[transport_id]
             await transport.connect()
-            await transport.send_freeform_message(msg, recipient)
+            await transport.send_freeform_message(msg, recipient, client_settings)
             await transport.disconnect()
 
     return {'msg_id': randint(0, 10000)}
