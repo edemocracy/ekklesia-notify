@@ -55,7 +55,7 @@ async def send_templated_message(msg: TemplatedMessage, client_settings: ClientS
 
         recipient_info = decode_recipient_info(msg.recipient_info, msg.sender or client_settings.default_sender)
 
-        for transport_id, recipient in recipient_info.items():
+        for transport_id, recipient in recipient_info.transports.items():
             transport = TRANSPORTS[transport_id]
             await transport.connect()
             await transport.send_templated_message(msg, recipient, client_settings)
@@ -74,7 +74,7 @@ async def send_freeform_message(msg: FreeformMessage, client_settings: ClientSet
 
         recipient_info = decode_recipient_info(msg.recipient_info, msg.sender or client_settings.default_sender)
 
-        for transport_id, recipient in recipient_info.items():
+        for transport_id, recipient in recipient_info.transports.items():
             transport = TRANSPORTS[transport_id]
             await transport.connect()
             await transport.send_freeform_message(msg, recipient, client_settings)

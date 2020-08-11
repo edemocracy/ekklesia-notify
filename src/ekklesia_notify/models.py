@@ -1,6 +1,16 @@
+from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, Union, Optional
 from pydantic import BaseModel
+from datetime import datetime, timezone
+
+try:
+    from ekklesia_notify.settings import recipient_info_transport_examples
+except ImportError:
+    recipient_info_transport_examples = {
+        "matrix": {"matrix_ids": ["@recipient:example.com"]},
+        "mail": {"to": ["recipient@example.com"]}
+    }
 
 
 class Message(BaseModel):
@@ -38,6 +48,11 @@ class TemplatedMessageTransport(Message):
         }
 
 
+class RecipientInfo(BaseModel):
+    timestamp: datetime
+    transports: Dict[str, Any]
+
+
 class FreeformMessage(FreeformMessageTransport):
     """
     Message with arbitrary content specified by sender.
@@ -45,7 +60,7 @@ class FreeformMessage(FreeformMessageTransport):
     starting with the subject.
     """
 
-    recipient_info: Union[str, Dict[str, Any]]
+    recipient_info: Union[str, RecipientInfo]
 
     class Config:
         schema_extra = {
@@ -56,8 +71,8 @@ class FreeformMessage(FreeformMessageTransport):
                 "subject": "test message",
                 "content": "Just a test.\n\nTester",
                 "recipient_info": {
-                    "matrix": {"matrix_ids": ["@recipient:example.com"]},
-                    "mail": {"to": ["recipient@example.com"]}
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "transports": recipient_info_transport_examples
                 }
             }
         }
@@ -67,4 +82,5 @@ class TemplatedMessage(TemplatedMessageTransport):
     Message with a predefined subject and content that may be modified by some variables.
     """
 
-    recipient_info: Union[str, Dict[str, Any]]
+    recipient_info: Union[str, RecipientInfo]
+

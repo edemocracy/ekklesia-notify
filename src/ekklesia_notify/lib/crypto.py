@@ -1,7 +1,9 @@
 import json
 from base64 import b64decode
+from typing import Union
 from eliot import log_call
 import nacl.secret
+from ekklesia_notify.models import RecipientInfo
 from ekklesia_notify.settings import nacl_keys
 
 
@@ -14,8 +16,9 @@ def decrypt_nacl(sender, crypted):
 
 
 @log_call
-def decode_recipient_info(recipient_info, sender):
-    if isinstance(recipient_info, dict):
+def decode_recipient_info(recipient_info: Union[RecipientInfo, str], sender: str) -> RecipientInfo:
+    # plain JSON variant, Pydantic already converted this
+    if isinstance(recipient_info, RecipientInfo):
         return recipient_info
 
     algo, crypted = recipient_info.split(":")
@@ -25,6 +28,7 @@ def decode_recipient_info(recipient_info, sender):
     else:
         raise NotImplementedError()
 
-    return json.loads(decrypted)
+    from_json = json.loads(decrypted)
+    return RecipientInfo(**from_json)
 
 
