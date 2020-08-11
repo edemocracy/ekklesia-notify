@@ -9,6 +9,10 @@ class Message(BaseModel):
     encrypt: bool = True
 
 
+class MessageResponse(BaseModel):
+    msg_id: str
+
+
 class FreeformMessageTransport(Message):
     subject: str
     content: str
