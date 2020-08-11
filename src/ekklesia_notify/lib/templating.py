@@ -6,6 +6,7 @@ from jinja2.exceptions import TemplateNotFound
 
 from ekklesia_notify.models import TemplatedMessage
 from ekklesia_notify import settings
+from ekklesia_notify.setting_models import ClientSettings
 
 
 Message.log(msg="templating", template_dir=settings.template_dir)
@@ -13,9 +14,9 @@ env = Environment(loader=FileSystemLoader(settings.template_dir))
 
 
 @log_call
-def render_template(msg: TemplatedMessage, transport_name: str, client_settings: Dict[str, Any]) -> str:
+def render_template(msg: TemplatedMessage, transport_name: str, client_settings: ClientSettings) -> str:
 
-    if msg.template not in client_settings["allowed_templates"]:
+    if msg.template not in client_settings.allowed_templates:
         raise ValueError("Template not allowed for this client")
 
     template_name = f"{transport_name}_{msg.template}.j2"

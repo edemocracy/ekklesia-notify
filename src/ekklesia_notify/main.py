@@ -6,6 +6,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from ekklesia_notify.lib.crypto import decode_recipient_info
 from ekklesia_notify.models import FreeformMessage, Message, TemplatedMessage
 from ekklesia_notify import configure_logging
+from ekklesia_notify.setting_models import ClientSettings
 from ekklesia_notify.transport.logging_dummy import LoggingDummyTransport
 from ekklesia_notify.transport.mail import MailTransport
 from ekklesia_notify.transport.matrix import MatrixTransport
@@ -24,7 +25,7 @@ TRANSPORTS = {
 }
 
 
-def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> str:
+def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> ClientSettings:
     client_settings = clients.get(credentials.username, {})
     expected_password = client_settings.get("password", "wrong username")
     if client_settings:
@@ -38,7 +39,7 @@ def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> st
             detail="incorrect username or password",
             headers={"WWW-Authenticate": "Basic"})
 
-    return client_settings
+    return ClientSettings(**client_settings)
 
 
 
@@ -48,11 +49,11 @@ def api_info():
 
 
 @app.post('/templated_message')
-async def send_templated_message(msg: TemplatedMessage, client_settings = Depends(identify_client)):
+async def send_templated_message(msg: TemplatedMessage, client_settings: ClientSettings = Depends(identify_client)):
 
     with start_task(task="send_templated_message"):
 
-        recipient_info = decode_recipient_info(msg.recipient_info, msg.sender)
+        recipient_info = decode_recipient_info(msg.recipient_info, msg.sender or client_settings.default_sender)
 
         for transport_id, recipient in recipient_info.items():
             transport = TRANSPORTS[transport_id]
@@ -64,11 +65,11 @@ async def send_templated_message(msg: TemplatedMessage, client_settings = Depend
 
 
 @app.post('/freeform_message')
-async def send_freeform_message(msg: FreeformMessage, client_settings = Depends(identify_client)):
+async def send_freeform_message(msg: FreeformMessage, client_settings: ClientSettings = Depends(identify_client)):
 
     with start_task(task="send_freeform_message"):
 
-        recipient_info = decode_recipient_info(msg.recipient_info, msg.sender)
+        recipient_info = decode_recipient_info(msg.recipient_info, msg.sender or client_settings.default_sender)
 
         for transport_id, recipient in recipient_info.items():
             transport = TRANSPORTS[transport_id]
