@@ -21,7 +21,7 @@ def decode_recipient_info(recipient_info: Union[RecipientInfo, str], sender: str
     if isinstance(recipient_info, RecipientInfo):
         return recipient_info
 
-    algo, crypted = recipient_info.split(":")
+    algo, crypted = recipient_info.strip().split(":")
 
     if algo == "nacl":
         decrypted = decrypt_nacl(sender, b64decode(crypted))
