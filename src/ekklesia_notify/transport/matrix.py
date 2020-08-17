@@ -1,9 +1,10 @@
 import asyncio
+import re
 from typing import Any, Dict, List
 from eliot import start_action, Message
 from nio.client.async_client import AsyncClient
 from ekklesia_notify.models import FreeformMessage, TemplatedMessage
-from ekklesia_notify.transport import Recipient, Transport
+from ekklesia_notify.transport import Recipient, SendFailed, Transport
 from ekklesia_notify.lib.matrix import after_first_sync, get_or_create_direct_room, make_client, send, login
 from ekklesia_notify.lib.templating import render_template
 
@@ -13,6 +14,9 @@ BODY_TEMPLATE = '''
 
 {content}
 '''.strip()
+
+
+MXID_RE = re.compile("@[a-z0-9./_=\-]+:.+")
 
 
 class MatrixRecipient(Recipient):
@@ -36,8 +40,13 @@ class MatrixTransport(Transport):
     async def _send_messages(self, recipient: MatrixRecipient, body):
         for mxid in recipient['matrix_ids']:
             with start_action(action_type="communicate", transport="matrix", mxid=mxid):
-                room_id = await get_or_create_direct_room(self.cl, mxid)
-                await send(self.cl, room_id, body)
+                if not MXID_RE.match(mxid):
+                    raise SendFailed("invalid Matrix user ID")
+                try:
+                    room_id = await get_or_create_direct_room(self.cl, mxid)
+                    await send(self.cl, room_id, body)
+                except Exception as e:
+                    raise SendFailed(e)
 
     async def send_freeform_message(self, msg: FreeformMessage, recipient: MatrixRecipient, client_settings):
         with start_action(action_type="send_freeform_message", transport="matrix", **msg.dict()):

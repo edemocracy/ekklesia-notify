@@ -6,6 +6,10 @@ class Recipient(TypedDict):
     pass
 
 
+class SendFailed(Exception):
+    pass
+
+
 class Transport:
     async def connect(self):
         raise NotImplementedError()
