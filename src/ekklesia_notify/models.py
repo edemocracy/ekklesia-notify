@@ -4,6 +4,7 @@ from typing import Any, Dict, Union, Optional
 from pydantic import BaseModel
 from datetime import datetime, timezone
 
+
 try:
     from ekklesia_notify.settings import recipient_info_transport_examples
 except ImportError:
@@ -19,8 +20,15 @@ class Message(BaseModel):
     encrypt: bool = True
 
 
+class TransportsFailed(str, Enum):
+    NONE = 'none'
+    SOME = 'some'
+    ALL = 'all'
+
+
 class MessageResponse(BaseModel):
     msg_id: str
+    transports_failed: TransportsFailed
 
 
 class FreeformMessageTransport(Message):
