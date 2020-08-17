@@ -2,7 +2,16 @@
 name = "ekklesia-notify"
 version = "2020.07.0"
 description = "Notification service for Ekklesia apps"
+keywords = ["ekklesia", "matrix", "mail", "notification"]
+license = "AGPL-3.0-or-later"
 authors = ["Tobias dpausp <dpausp@posteo.de>"]
+classifiers = [
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8"
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
