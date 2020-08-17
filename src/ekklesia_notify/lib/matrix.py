@@ -15,30 +15,25 @@ settings = transport_settings['matrix']
 
 
 def make_client():
-    client_config = AsyncClientConfig(
-        encryption_enabled=True
-    )
+    client_config = AsyncClientConfig(encryption_enabled=True)
     return AsyncClient(
         settings["homeserver"],
         settings["mxid"],
         device_id=settings["device_id"],
         config=client_config,
-        store_path=settings["store_dir"])
+        store_path=settings["store_dir"]
+    )
 
 
 @log_call
 def write_details_to_disk(resp: LoginResponse) -> None:
-        """Writes login details to disk so that we can restore our session later
+    """Writes login details to disk so that we can restore our session later
         without logging in again and creating a new device ID.
         Arguments:
             resp {LoginResponse} -- the successful client login response.
         """
-        with open(settings["session_details_file"], "w") as f:
-            json.dump({
-                "access_token": resp.access_token,
-                "device_id": resp.device_id,
-                "user_id": resp.user_id
-            }, f)
+    with open(settings["session_details_file"], "w") as f:
+        json.dump({"access_token": resp.access_token, "device_id": resp.device_id, "user_id": resp.user_id}, f)
 
 
 @log_call
@@ -88,10 +83,7 @@ async def after_first_sync(cl: AsyncClient):
 
 
 async def message_callback(room: MatrixRoom, event: RoomMessageText) -> None:
-    print(
-        f"Message received in room {room.display_name}\n"
-        f"{room.user_name(event.sender)} | {event.body}"
-    )
+    print(f"Message received in room {room.display_name}\n" f"{room.user_name(event.sender)} | {event.body}")
 
 
 async def send(cl: AsyncClient, room_id: str, body: str):

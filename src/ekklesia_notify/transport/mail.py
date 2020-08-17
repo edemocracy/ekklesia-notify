@@ -26,7 +26,9 @@ class MailTransport(Transport):
             for to_addr in recipient['to'][:10]:
                 await send(self.cl, to_addr, msg.subject, msg.content)
 
-    async def send_templated_message(self, msg: TemplatedMessage, recipient: MailRecipient, client_settings: ClientSettings):
+    async def send_templated_message(
+        self, msg: TemplatedMessage, recipient: MailRecipient, client_settings: ClientSettings
+    ):
         lines = render_template(msg, self.transport_name, client_settings).splitlines()
 
         subject = lines[0]
@@ -39,4 +41,3 @@ class MailTransport(Transport):
     async def disconnect(self):
         self.cl.close()
         Message.log(transport="mail", state="shutdown")
-

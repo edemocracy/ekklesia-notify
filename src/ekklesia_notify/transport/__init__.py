@@ -11,6 +11,7 @@ class SendFailed(Exception):
 
 
 class Transport:
+
     async def connect(self):
         raise NotImplementedError()
 

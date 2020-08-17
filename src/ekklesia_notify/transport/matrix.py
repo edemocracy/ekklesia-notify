@@ -8,13 +8,11 @@ from ekklesia_notify.transport import Recipient, SendFailed, Transport
 from ekklesia_notify.lib.matrix import after_first_sync, get_or_create_direct_room, make_client, send, login
 from ekklesia_notify.lib.templating import render_template
 
-
 BODY_TEMPLATE = '''
 **{subject}**
 
 {content}
 '''.strip()
-
 
 MXID_RE = re.compile("@[a-z0-9./_=\-]+:.+")
 

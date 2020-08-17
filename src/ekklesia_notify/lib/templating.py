@@ -8,7 +8,6 @@ from ekklesia_notify.models import TemplatedMessage
 from ekklesia_notify import settings
 from ekklesia_notify.setting_models import ClientSettings
 
-
 Message.log(msg="templating", template_dir=settings.template_dir)
 env = Environment(loader=FileSystemLoader(settings.template_dir))
 
@@ -28,4 +27,3 @@ def render_template(msg: TemplatedMessage, transport_name: str, client_settings:
 
     context = {"sender": msg.sender, **msg.variables}
     return template.render(context)
-

@@ -4,13 +4,16 @@ from typing import Any, Dict, Union, Optional
 from pydantic import BaseModel
 from datetime import datetime, timezone
 
-
 try:
     from ekklesia_notify.settings import recipient_info_transport_examples
 except ImportError:
     recipient_info_transport_examples = {
-        "matrix": {"matrix_ids": ["@recipient:example.com"]},
-        "mail": {"to": ["recipient@example.com"]}
+        "matrix": {
+            "matrix_ids": ["@recipient:example.com"]
+        },
+        "mail": {
+            "to": ["recipient@example.com"]
+        }
     }
 
 
@@ -85,10 +88,10 @@ class FreeformMessage(FreeformMessageTransport):
             }
         }
 
+
 class TemplatedMessage(TemplatedMessageTransport):
     """
     Message with a predefined subject and content that may be modified by some variables.
     """
 
     recipient_info: Union[str, RecipientInfo]
-

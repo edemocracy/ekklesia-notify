@@ -20,11 +20,7 @@ app = FastAPI()
 
 security = HTTPBasic()
 
-TRANSPORTS = {
-    'mail': MailTransport(),
-    'matrix': MatrixTransport(),
-    'logging': LoggingDummyTransport()
-}
+TRANSPORTS = {'mail': MailTransport(), 'matrix': MatrixTransport(), 'logging': LoggingDummyTransport()}
 
 
 def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> ClientSettings:
@@ -39,7 +35,8 @@ def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> Cl
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="incorrect username or password",
-            headers={"WWW-Authenticate": "Basic"})
+            headers={"WWW-Authenticate": "Basic"}
+        )
 
     return ClientSettings(**client_settings)
 
@@ -76,7 +73,8 @@ async def send_templated_message(msg: TemplatedMessage, client_settings: ClientS
         task.add_success_fields(
             msg_id=msg_id,
             failed_transports=[t.transport_name for t in failed_transports],
-            successful_transports=[t.transport_name for t in successful_transports])
+            successful_transports=[t.transport_name for t in successful_transports]
+        )
 
     if not successful_transports:
         transports_failed = TransportsFailed.ALL
@@ -115,7 +113,8 @@ async def send_freeform_message(msg: FreeformMessage, client_settings: ClientSet
         task.add_success_fields(
             msg_id=msg_id,
             failed_transports=[t.transport_name for t in failed_transports],
-            successful_transports=[t.transport_name for t in successful_transports])
+            successful_transports=[t.transport_name for t in successful_transports]
+        )
 
     if not successful_transports:
         transports_failed = TransportsFailed.ALL

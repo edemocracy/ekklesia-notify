@@ -9,9 +9,7 @@ from aiosmtplib import SMTP
 
 from ekklesia_notify.settings import transport_settings
 
-
 settings = transport_settings['mail']
-
 
 HEADER_TEMPLATE = '''
 Subject: {subject}
@@ -21,10 +19,12 @@ Date: {date}
 Auto-Submitted: auto-generated
 '''
 
+
 def load_smime_p12():
     with open(settings["cert_p12"], 'rb') as fp:
         return pkcs12.load_key_and_certificates(
-            fp.read(), settings["cert_password"].encode("utf8"), backends.default_backend())
+            fp.read(), settings["cert_password"].encode("utf8"), backends.default_backend()
+        )
 
 
 def make_client() -> SMTP:
@@ -41,10 +41,8 @@ async def login(cl):
 async def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
 
     headers = HEADER_TEMPLATE.format(
-        subject=subject,
-        sender=settings["sender"],
-        to=recipient,
-        date=formatdate(localtime=True))
+        subject=subject, sender=settings["sender"], to=recipient, date=formatdate(localtime=True)
+    )
 
     mime_text = MIMEText(body, "plain")
     p12 = load_smime_p12()
@@ -54,5 +52,3 @@ async def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
     content = (headers + body).strip()
 
     await cl.sendmail(settings["sender"], recipient, content)
-
-

@@ -6,6 +6,7 @@ from eliot.json import EliotJSONEncoder
 
 
 class MyEncoder(EliotJSONEncoder):
+
     def default(self, obj):
 
         try:

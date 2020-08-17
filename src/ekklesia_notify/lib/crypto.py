@@ -43,5 +43,3 @@ def decode_recipient_info(recipient_info: Union[RecipientInfo, str], sender: str
 
     from_json = json.loads(decrypted)
     return RecipientInfo(**from_json)
-
-
