@@ -6,7 +6,7 @@ let
   pkgs = import sources_.nixpkgs { };
   niv = (import sources_.niv { }).niv;
   inherit ((import "${sources_.poetry2nix}/overlay.nix") pkgs pkgs) poetry2nix poetry;
-  python = pkgs.python38;
+  python = pkgs.python39;
 
   poetryWrapper = with python.pkgs; pkgs.writeScriptBin "poetry" ''
     export PYTHONPATH=
