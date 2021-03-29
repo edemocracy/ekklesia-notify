@@ -111,9 +111,9 @@ in rec {
 
   # Various tools for log files, deps management, running scripts and so on
   shellTools = [
-    niv
     pkgs.entr
     pkgs.jq
+    pkgs.niv
     pkgs.zsh
     poetryPackagesByName.eliot-tree
     poetryWrapper
