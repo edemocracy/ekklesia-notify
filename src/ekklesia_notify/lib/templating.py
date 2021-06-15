@@ -4,9 +4,9 @@ from jinja2 import FileSystemLoader
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
 
-from ekklesia_notify.models import TemplatedMessage
-from ekklesia_notify import settings
-from ekklesia_notify.setting_models import ClientSettings
+from ekklesia_notify.api_models import TemplatedMessage
+from ekklesia_notify.settings import settings
+from ekklesia_notify.settings_models import ClientSettings
 
 Message.log(msg="templating", template_dir=settings.template_dir)
 env = Environment(loader=FileSystemLoader(settings.template_dir))

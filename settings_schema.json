@@ -1,0 +1,303 @@
+{
+  "title": "EkklesiaNotifySettings",
+  "description": "Top-level settings object",
+  "type": "object",
+  "properties": {
+    "nacl_keys": {
+      "title": "Nacl Keys",
+      "env_names": [
+        "ekklesia_notify_nacl_keys"
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "writeOnly": true,
+        "format": "password"
+      }
+    },
+    "aes_keys": {
+      "title": "Aes Keys",
+      "env_names": [
+        "ekklesia_notify_aes_keys"
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "writeOnly": true,
+        "format": "password"
+      }
+    },
+    "transport_settings": {
+      "title": "Transport Settings",
+      "env_names": [
+        "ekklesia_notify_transport_settings"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/TransportSettings"
+        }
+      ]
+    },
+    "clients": {
+      "title": "Clients",
+      "env_names": [
+        "ekklesia_notify_clients"
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/ClientSettings"
+      }
+    },
+    "recipient_info_transport_examples": {
+      "title": "Recipient Info Transport Examples",
+      "env_names": [
+        "ekklesia_notify_recipient_info_transport_examples"
+      ],
+      "type": "object"
+    },
+    "template_dir": {
+      "title": "Template Dir",
+      "env_names": [
+        "ekklesia_notify_template_dir"
+      ],
+      "format": "directory-path",
+      "type": "string"
+    }
+  },
+  "required": [
+    "nacl_keys",
+    "aes_keys",
+    "transport_settings",
+    "clients",
+    "recipient_info_transport_examples",
+    "template_dir"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "MailTransportSettings": {
+      "title": "MailTransportSettings",
+      "description": "Settings for the mail transport",
+      "type": "object",
+      "properties": {
+        "cert_p12": {
+          "title": "Cert P12",
+          "env_names": [
+            "cert_p12"
+          ],
+          "format": "file-path",
+          "type": "string"
+        },
+        "cert_password": {
+          "title": "Cert Password",
+          "env_names": [
+            "cert_password"
+          ],
+          "type": "string",
+          "writeOnly": true,
+          "format": "password"
+        },
+        "sender": {
+          "title": "Sender",
+          "env_names": [
+            "sender"
+          ],
+          "type": "string",
+          "format": "email"
+        },
+        "smtp_password": {
+          "title": "Smtp Password",
+          "env_names": [
+            "smtp_password"
+          ],
+          "type": "string",
+          "writeOnly": true,
+          "format": "password"
+        },
+        "smtp_port": {
+          "title": "Smtp Port",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 65536,
+          "strict": true,
+          "env_names": [
+            "smtp_port"
+          ],
+          "type": "integer"
+        },
+        "smtp_server": {
+          "title": "Smtp Server",
+          "env_names": [
+            "smtp_server"
+          ],
+          "type": "string"
+        },
+        "smtp_user": {
+          "title": "Smtp User",
+          "env_names": [
+            "smtp_user"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "cert_p12",
+        "cert_password",
+        "sender",
+        "smtp_password",
+        "smtp_port",
+        "smtp_server",
+        "smtp_user"
+      ],
+      "additionalProperties": false
+    },
+    "MatrixTransportSettings": {
+      "title": "MatrixTransportSettings",
+      "description": "Settings for the matrix transport",
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "title": "Device Id",
+          "env_names": [
+            "device_id"
+          ],
+          "type": "string"
+        },
+        "homeserver": {
+          "title": "Homeserver",
+          "env_names": [
+            "homeserver"
+          ],
+          "minLength": 1,
+          "maxLength": 2083,
+          "format": "uri",
+          "type": "string"
+        },
+        "mxid": {
+          "title": "Mxid",
+          "pattern": "@[a-z0-9./_=\\-]+:.+",
+          "env_names": [
+            "mxid"
+          ],
+          "type": "string"
+        },
+        "password": {
+          "title": "Password",
+          "env_names": [
+            "password"
+          ],
+          "type": "string",
+          "writeOnly": true,
+          "format": "password"
+        },
+        "session_details_file": {
+          "title": "Session Details File",
+          "env_names": [
+            "session_details_file"
+          ],
+          "format": "file-path",
+          "type": "string"
+        },
+        "store_dir": {
+          "title": "Store Dir",
+          "env_names": [
+            "store_dir"
+          ],
+          "format": "directory-path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device_id",
+        "homeserver",
+        "mxid",
+        "password",
+        "session_details_file",
+        "store_dir"
+      ],
+      "additionalProperties": false
+    },
+    "TransportSettings": {
+      "title": "TransportSettings",
+      "description": "Settings for transports that are used to send out notifications.",
+      "type": "object",
+      "properties": {
+        "mail": {
+          "title": "Mail",
+          "env_names": [
+            "mail"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/MailTransportSettings"
+            }
+          ]
+        },
+        "matrix": {
+          "title": "Matrix",
+          "env_names": [
+            "matrix"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/MatrixTransportSettings"
+            }
+          ]
+        }
+      },
+      "required": [
+        "mail",
+        "matrix"
+      ],
+      "additionalProperties": false
+    },
+    "ClientSettings": {
+      "title": "ClientSettings",
+      "description": "Settings for clients using this service.",
+      "type": "object",
+      "properties": {
+        "password": {
+          "title": "Password",
+          "env_names": [
+            "password"
+          ],
+          "type": "string",
+          "writeOnly": true,
+          "format": "password"
+        },
+        "default_sender": {
+          "title": "Default Sender",
+          "env_names": [
+            "default_sender"
+          ],
+          "type": "string"
+        },
+        "allowed_senders": {
+          "title": "Allowed Senders",
+          "env_names": [
+            "allowed_senders"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowed_templates": {
+          "title": "Allowed Templates",
+          "env_names": [
+            "allowed_templates"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "password",
+        "default_sender",
+        "allowed_senders",
+        "allowed_templates"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

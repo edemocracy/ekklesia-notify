@@ -1,0 +1,2 @@
+from ekklesia_notify.settings_models import EkklesiaNotifySettings
+print(EkklesiaNotifySettings.schema_json(indent=2))

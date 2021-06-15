@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from ekklesia_notify.main import app
-from ekklesia_notify.models import FreeformMessage
+from ekklesia_notify.api_models import FreeformMessage
 
 client = TestClient(app)
 

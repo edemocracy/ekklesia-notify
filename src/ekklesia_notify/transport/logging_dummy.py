@@ -1,7 +1,7 @@
 import asyncio
 import random
 from eliot import log_call, start_action, Message
-from ekklesia_notify.models import FreeformMessage, TemplatedMessage
+from ekklesia_notify.api_models import FreeformMessage, TemplatedMessage
 from ekklesia_notify.transport import Transport
 
 

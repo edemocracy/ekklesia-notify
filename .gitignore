@@ -11,10 +11,9 @@ log.json
 src/ekklesia_notify.egg-info/
 .cache/
 .eggs/
-src/ekklesia_notify/config.py
 nix/*_frozen.txt
-config*.yml
-testconfig*.yml
+settings*.yml
+testsettings*.yml
 .pytest_cache
 result
 .mypy_cache/

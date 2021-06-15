@@ -4,19 +4,19 @@ from typing import Union
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import nacl.secret
 from eliot import log_call, start_action
-from ekklesia_notify.models import RecipientInfo
-from ekklesia_notify.settings import nacl_keys, aes_keys
+from ekklesia_notify.api_models import RecipientInfo
+from ekklesia_notify.settings import settings
 
 
 def decrypt_nacl(sender, crypted):
-    key = b64decode(nacl_keys[sender])
+    key = b64decode(settings.nacl_keys[sender].get_secret_value())
     box = nacl.secret.SecretBox(key)
     decrypted = box.decrypt(b64decode(crypted))
     return decrypted.decode("utf8")
 
 
 def decrypt_aes_gcm(sender, crypted):
-    key = b64decode(aes_keys[sender])
+    key = b64decode(settings.aes_keys[sender].get_secret_value())
     crypted_bytes = b64decode(crypted)
     nonce = crypted_bytes[:12]
     ciphertext = crypted_bytes[12:]

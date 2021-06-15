@@ -3,7 +3,7 @@ import re
 from typing import Any, Dict, List
 from eliot import start_action, Message
 from nio.client.async_client import AsyncClient
-from ekklesia_notify.models import FreeformMessage, TemplatedMessage
+from ekklesia_notify.api_models import FreeformMessage, TemplatedMessage
 from ekklesia_notify.transport import Recipient, SendFailed, Transport
 from ekklesia_notify.lib.matrix import after_first_sync, get_or_create_direct_room, make_client, send, login
 from ekklesia_notify.lib.templating import render_template

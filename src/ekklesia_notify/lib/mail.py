@@ -7,9 +7,10 @@ from eliot import log_call
 from endesive import email
 from aiosmtplib import SMTP
 
-from ekklesia_notify.settings import transport_settings
+import ekklesia_notify.settings
 
-settings = transport_settings['mail']
+settings = ekklesia_notify.settings.settings.transport_settings.mail
+
 
 HEADER_TEMPLATE = '''
 Subject: {subject}
@@ -21,27 +22,27 @@ Auto-Submitted: auto-generated
 
 
 def load_smime_p12():
-    with open(settings["cert_p12"], 'rb') as fp:
+    with open(settings.cert_p12, 'rb') as fp:
         return pkcs12.load_key_and_certificates(
-            fp.read(), settings["cert_password"].encode("utf8"), backends.default_backend()
+            fp.read(), settings.cert_password.get_secret_value().encode("utf8"), backends.default_backend()
         )
 
 
 def make_client() -> SMTP:
-    return SMTP(settings["smtp_server"], settings["smtp_port"])
+    return SMTP(settings.smtp_server, settings.smtp_port)
 
 
 async def login(cl):
     await cl.connect()
     await cl.starttls()
-    await cl.login(settings["smtp_user"], settings["smtp_password"])
+    await cl.login(settings.smtp_user, settings.smtp_password.get_secret_value())
 
 
 @log_call
 async def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
 
     headers = HEADER_TEMPLATE.format(
-        subject=subject, sender=settings["sender"], to=recipient, date=formatdate(localtime=True)
+        subject=subject, sender=settings.sender, to=recipient, date=formatdate(localtime=True)
     )
 
     mime_text = MIMEText(body, "plain")
@@ -51,4 +52,4 @@ async def send(cl: SMTP, recipient: str, subject: str, body: str) -> None:
     body = signed.decode("ascii")
     content = (headers + body).strip()
 
-    await cl.sendmail(settings["sender"], recipient, content)
+    await cl.sendmail(settings.sender, recipient, content)

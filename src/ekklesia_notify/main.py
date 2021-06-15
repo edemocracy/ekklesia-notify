@@ -5,14 +5,14 @@ from ulid import ULID
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from ekklesia_notify.lib.crypto import decode_recipient_info
-from ekklesia_notify.models import FreeformMessage, Message, MessageResponse, TemplatedMessage, TransportsFailed
+from ekklesia_notify.api_models import FreeformMessage, Message, MessageResponse, TemplatedMessage, TransportsFailed
 from ekklesia_notify import configure_logging
-from ekklesia_notify.setting_models import ClientSettings
+from ekklesia_notify.settings_models import ClientSettings
 from ekklesia_notify.transport import SendFailed
 from ekklesia_notify.transport.logging_dummy import LoggingDummyTransport
 from ekklesia_notify.transport.mail import MailTransport
 from ekklesia_notify.transport.matrix import MatrixTransport
-from ekklesia_notify.settings import clients
+from ekklesia_notify.settings import settings
 
 configure_logging()
 
@@ -24,12 +24,11 @@ TRANSPORTS = {'mail': MailTransport(), 'matrix': MatrixTransport(), 'logging': L
 
 
 def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> ClientSettings:
-    client_settings = clients.get(credentials.username, {})
-    expected_password = client_settings.get("password", "wrong username")
-    if client_settings:
-        password_correct = secrets.compare_digest(credentials.password, expected_password)
+    client_settings = settings.clients.get(credentials.username)
+    if client_settings is not None:
+        password_correct = secrets.compare_digest(credentials.password, client_settings.password.get_secret_value())
     else:
-        password_correct = secrets.compare_digest("invalid", expected_password)
+        password_correct = secrets.compare_digest("invalid", "wrong")
 
     if not password_correct:
         raise HTTPException(
@@ -38,7 +37,7 @@ def identify_client(credentials: HTTPBasicCredentials = Depends(security)) -> Cl
             headers={"WWW-Authenticate": "Basic"}
         )
 
-    return ClientSettings(**client_settings)
+    return client_settings
 
 
 @app.get('/')

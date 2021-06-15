@@ -1,5 +1,5 @@
 from typing import TypedDict
-from ekklesia_notify.models import FreeformMessage, TemplatedMessage
+from ekklesia_notify.api_models import FreeformMessage, TemplatedMessage
 
 
 class Recipient(TypedDict):

@@ -2,8 +2,8 @@ from typing import Any, Dict, List
 from eliot import start_action, Message
 from ekklesia_notify.lib.mail import login, make_client, send
 from ekklesia_notify.lib.templating import render_template
-from ekklesia_notify.models import FreeformMessage, TemplatedMessage
-from ekklesia_notify.setting_models import ClientSettings
+from ekklesia_notify.api_models import FreeformMessage, TemplatedMessage
+from ekklesia_notify.settings_models import ClientSettings
 from ekklesia_notify.transport import Recipient, Transport
 
 
