@@ -178,6 +178,20 @@ ssh = ["bcrypt (>=3.1.5)"]
 test = ["pytest (>=6.0)", "pytest-cov", "pytest-subtests", "pytest-xdist", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
 
 [[package]]
+name = "devtools"
+version = "0.6.1"
+description = "Python's missing debug print command and other development tools."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+Pygments = {version = ">=2.2.0", optional = true, markers = "extra == \"pygments\""}
+
+[package.extras]
+pygments = ["Pygments (>=2.2.0)"]
+
+[[package]]
 name = "eliot"
 version = "1.13.0"
 description = "Logging library that tells you why it happened"
@@ -898,7 +912,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "68d08bc62cba9b39e2ae1e334c89f089d0a77a520bc8274f6b8558c394d67e24"
+content-hash = "03da61fa0a41d9996b8a98359496632ec26e4d75d9a263b213de2b46729e73fc"
 
 [metadata.files]
 aiofiles = [
@@ -1052,6 +1066,10 @@ cryptography = [
     {file = "cryptography-3.4.7-pp37-pypy37_pp73-manylinux2010_x86_64.whl", hash = "sha256:7ec5d3b029f5fa2b179325908b9cd93db28ab7b85bb6c1db56b10e0b54235177"},
     {file = "cryptography-3.4.7-pp37-pypy37_pp73-manylinux2014_x86_64.whl", hash = "sha256:ee77aa129f481be46f8d92a1a7db57269a2f23052d5f2433b4621bb457081cc9"},
     {file = "cryptography-3.4.7.tar.gz", hash = "sha256:3d10de8116d25649631977cb37da6cbdd2d6fa0e0281d014a5b7d337255ca713"},
+]
+devtools = [
+    {file = "devtools-0.6.1-py3-none-any.whl", hash = "sha256:7334183972a8d04e81d08b7f62126abca9b6f4de51d825c5fdcb9c88f252601a"},
+    {file = "devtools-0.6.1.tar.gz", hash = "sha256:a054307594d35d28fae8df7629967363e851ae0ac7b2152640a8a401c39d42d7"},
 ]
 eliot = [
     {file = "eliot-1.13.0-py2.py3-none-any.whl", hash = "sha256:f1d54350ef3156f6da614aa886d3da9dc1641c3cba1a86ecabda92fce594e68a"},
