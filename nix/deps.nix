@@ -8,6 +8,8 @@ let
   inherit ((import "${sources_.poetry2nix}/overlay.nix") pkgs pkgs) poetry2nix poetry;
   python = pkgs.python39;
 
+  exportEnv = name: "export ${name}=\${${name}:+\${${name}}:}";
+
   poetryWrapper = with python.pkgs; pkgs.writeScriptBin "poetry" ''
     export PYTHONPATH=
     unset SOURCE_DATE_EPOCH
@@ -57,17 +59,6 @@ in rec {
         (p: { name = p.pname; value = p; })
         poetryPackages);
 
-  uvicorn = with python.pkgs;
-  let
-    exportEnv = name: "export ${name}=\${${name}:+\${${name}}:}";
-
-   in pkgs.writeScriptBin "uvicorn" ''
-    ${exportEnv "PYTHONPATH"}./src:${pythonPath}
-    ${exportEnv "LD_LIBRARY_PATH"}${pkgs.openssl.out}/lib
-
-    ${python.pkgs.uvicorn}/bin/uvicorn "$@"
-  '';
-
   # Can be imported in Python code or run directly as debug tools
   debugLibsAndTools = with python.pkgs; [
     ipython
@@ -82,6 +73,7 @@ in rec {
 
   pythonTest = pythonDevTest;
   pythonDev = pythonDevTest;
+  pythonPath = "${pythonDevTest}/${pythonDevTest.sitePackages}";
 
   # Code style and security tools
   linters = with python.pkgs; let
@@ -109,6 +101,20 @@ in rec {
     yapf
   ];
 
+  # XXX: can we avoid wrapping every command?
+  pytest = with python.pkgs; pkgs.writeScriptBin "pytest" ''
+    ${exportEnv "LD_LIBRARY_PATH"}${pkgs.openssl.out}/lib
+
+    ${pythonDevTest}/bin/pytest "$@"
+  '';
+
+  uvicorn = with python.pkgs; pkgs.writeScriptBin "uvicorn" ''
+    ${exportEnv "PYTHONPATH"}./src:${pythonPath}
+    ${exportEnv "LD_LIBRARY_PATH"}${pkgs.openssl.out}/lib
+
+    ${python.pkgs.uvicorn}/bin/uvicorn "$@"
+  '';
+
   # Various tools for log files, deps management, running scripts and so on
   shellTools = [
     pkgs.entr
@@ -117,6 +123,7 @@ in rec {
     pkgs.zsh
     poetryPackagesByName.eliot-tree
     poetryWrapper
+    pytest
     uvicorn
   ];
 
@@ -129,6 +136,5 @@ in rec {
       pythonTest
     ];
 
-  pythonPath = "${pythonDevTest}/${pythonDevTest.sitePackages}";
   shellPath = lib.makeBinPath shellInputs;
 }
