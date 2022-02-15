@@ -1,4 +1,3 @@
-src/ekklesia_notify/settings.py
 log.json
 *.pyc
 .settings
