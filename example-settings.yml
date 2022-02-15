@@ -1,0 +1,42 @@
+nacl_keys:
+  example_app: "wNxJcEc9W8a1hOzgv80DzLdem+7nAx7l5ydRgrlbC+k="
+aes_keys:
+  example_app: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA
+transport_settings:
+  matrix:
+    device_id: DEVICEID1
+    homeserver: https://matrix.org
+    mxid: "@example:matrix.example.org"
+    password: passwordformatrix
+    session_details_file: /srv/ekklesia_notify/nio/credentials.json
+    store_dir: /srv/ekklesia_notifynio
+  mail:
+    cert_p12: /srv/ekklesia_notify/mailcert.p12
+    cert_password: "1234"
+    sender: ekklesia_notify@example.org
+    smtp_password: passwordformail
+    smtp_port: 587
+    smtp_server: mail.example.org
+    smtp_user: ekklesia_notify@example.de
+clients:
+  vvvote:
+    password: vvvotepassword
+    allowed_senders:
+      - vvvote
+    default_sender: vvvote
+    allowed_templates:
+      - example_notification
+  example_app:
+    password: example_app
+    allowed_senders:
+      - example_app
+    default_sender: example_app
+    allowed_templates:
+      - example_notification
+template_dir: templates
+
+recipient_info_transport_examples:
+  mail:
+    to: ["user@example.org"]
+  matrix:
+    matrix_ids": ["@user:matrix.example.org"]
