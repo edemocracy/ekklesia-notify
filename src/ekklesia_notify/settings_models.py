@@ -1,6 +1,6 @@
-from typing import Annotated, List, Pattern
-from pydantic import BaseModel, BaseSettings, SecretStr, Field
-from pydantic.networks import EmailStr, HttpUrl
+from typing import Annotated, List
+from pydantic import BaseSettings, SecretStr, Field
+from pydantic.networks import EmailStr, AnyHttpUrl
 from pydantic.types import DirectoryPath, FilePath
 
 
@@ -15,15 +15,21 @@ class ClientSettings(BaseSettings):
     allowed_senders: List[str]
     allowed_templates: List[str]
 
+    class Config:
+        env_prefix = 'ekklesia_notify_'
+
 
 class MatrixTransportSettings(BaseSettings):
     """Settings for the matrix transport"""
     device_id: str
-    homeserver: HttpUrl
+    homeserver: AnyHttpUrl
     mxid: MatrixId
     password: SecretStr
     session_details_file: FilePath
     store_dir: DirectoryPath
+
+    class Config:
+        env_prefix = 'ekklesia_notify_'
 
 
 class MailTransportSettings(BaseSettings):
@@ -36,11 +42,17 @@ class MailTransportSettings(BaseSettings):
     smtp_server: str
     smtp_user: str
 
+    class Config:
+        env_prefix = 'ekklesia_notify_'
+
 
 class TransportSettings(BaseSettings):
     """Settings for transports that are used to send out notifications."""
     mail: MailTransportSettings
     matrix: MatrixTransportSettings
+
+    class Config:
+        env_prefix = 'ekklesia_notify_'
 
 
 class EkklesiaNotifySettings(BaseSettings):
