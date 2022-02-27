@@ -110,6 +110,7 @@ in rec {
 
   uvicorn = with python.pkgs; pkgs.writeScriptBin "uvicorn" ''
     ${exportEnv "PYTHONPATH"}./src:${pythonPath}
+    ${exportEnv "PATH"}${pkgs.binutils-unwrapped.out}/bin
     ${exportEnv "LD_LIBRARY_PATH"}${pkgs.openssl.out}/lib
 
     ${python.pkgs.uvicorn}/bin/uvicorn "$@"
