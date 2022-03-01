@@ -82,7 +82,7 @@
         "cert_p12": {
           "title": "Cert P12",
           "env_names": [
-            "cert_p12"
+            "ekklesia_notify_cert_p12"
           ],
           "format": "file-path",
           "type": "string"
@@ -90,7 +90,7 @@
         "cert_password": {
           "title": "Cert Password",
           "env_names": [
-            "cert_password"
+            "ekklesia_notify_cert_password"
           ],
           "type": "string",
           "writeOnly": true,
@@ -99,7 +99,7 @@
         "sender": {
           "title": "Sender",
           "env_names": [
-            "sender"
+            "ekklesia_notify_sender"
           ],
           "type": "string",
           "format": "email"
@@ -107,7 +107,7 @@
         "smtp_password": {
           "title": "Smtp Password",
           "env_names": [
-            "smtp_password"
+            "ekklesia_notify_smtp_password"
           ],
           "type": "string",
           "writeOnly": true,
@@ -119,21 +119,21 @@
           "exclusiveMaximum": 65536,
           "strict": true,
           "env_names": [
-            "smtp_port"
+            "ekklesia_notify_smtp_port"
           ],
           "type": "integer"
         },
         "smtp_server": {
           "title": "Smtp Server",
           "env_names": [
-            "smtp_server"
+            "ekklesia_notify_smtp_server"
           ],
           "type": "string"
         },
         "smtp_user": {
           "title": "Smtp User",
           "env_names": [
-            "smtp_user"
+            "ekklesia_notify_smtp_user"
           ],
           "type": "string"
         }
@@ -157,17 +157,17 @@
         "device_id": {
           "title": "Device Id",
           "env_names": [
-            "device_id"
+            "ekklesia_notify_device_id"
           ],
           "type": "string"
         },
         "homeserver": {
           "title": "Homeserver",
           "env_names": [
-            "homeserver"
+            "ekklesia_notify_homeserver"
           ],
           "minLength": 1,
-          "maxLength": 2083,
+          "maxLength": 65536,
           "format": "uri",
           "type": "string"
         },
@@ -175,14 +175,14 @@
           "title": "Mxid",
           "pattern": "@[a-z0-9./_=\\-]+:.+",
           "env_names": [
-            "mxid"
+            "ekklesia_notify_mxid"
           ],
           "type": "string"
         },
         "password": {
           "title": "Password",
           "env_names": [
-            "password"
+            "ekklesia_notify_password"
           ],
           "type": "string",
           "writeOnly": true,
@@ -191,7 +191,7 @@
         "session_details_file": {
           "title": "Session Details File",
           "env_names": [
-            "session_details_file"
+            "ekklesia_notify_session_details_file"
           ],
           "format": "file-path",
           "type": "string"
@@ -199,7 +199,7 @@
         "store_dir": {
           "title": "Store Dir",
           "env_names": [
-            "store_dir"
+            "ekklesia_notify_store_dir"
           ],
           "format": "directory-path",
           "type": "string"
@@ -223,7 +223,7 @@
         "mail": {
           "title": "Mail",
           "env_names": [
-            "mail"
+            "ekklesia_notify_mail"
           ],
           "allOf": [
             {
@@ -234,7 +234,7 @@
         "matrix": {
           "title": "Matrix",
           "env_names": [
-            "matrix"
+            "ekklesia_notify_matrix"
           ],
           "allOf": [
             {
@@ -257,7 +257,7 @@
         "password": {
           "title": "Password",
           "env_names": [
-            "password"
+            "ekklesia_notify_password"
           ],
           "type": "string",
           "writeOnly": true,
@@ -266,14 +266,14 @@
         "default_sender": {
           "title": "Default Sender",
           "env_names": [
-            "default_sender"
+            "ekklesia_notify_default_sender"
           ],
           "type": "string"
         },
         "allowed_senders": {
           "title": "Allowed Senders",
           "env_names": [
-            "allowed_senders"
+            "ekklesia_notify_allowed_senders"
           ],
           "type": "array",
           "items": {
@@ -283,7 +283,7 @@
         "allowed_templates": {
           "title": "Allowed Templates",
           "env_names": [
-            "allowed_templates"
+            "ekklesia_notify_allowed_templates"
           ],
           "type": "array",
           "items": {

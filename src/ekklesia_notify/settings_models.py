@@ -8,18 +8,20 @@ Port = Annotated[int, Field(strict=True, gt=0, lt=65536)]
 MatrixId = Annotated[str, Field(regex="@[a-z0-9./_=\-]+:.+")]
 
 
-class ClientSettings(BaseSettings):
+class EkklesiaNotifySettings(BaseSettings):
+    class Config:
+        env_prefix = 'ekklesia_notify_'
+
+
+class ClientSettings(EkklesiaNotifySettings):
     """Settings for clients using this service."""
     password: SecretStr
     default_sender: str
     allowed_senders: List[str]
     allowed_templates: List[str]
 
-    class Config:
-        env_prefix = 'ekklesia_notify_'
 
-
-class MatrixTransportSettings(BaseSettings):
+class MatrixTransportSettings(EkklesiaNotifySettings):
     """Settings for the matrix transport"""
     device_id: str
     homeserver: AnyHttpUrl
@@ -28,11 +30,8 @@ class MatrixTransportSettings(BaseSettings):
     session_details_file: FilePath
     store_dir: DirectoryPath
 
-    class Config:
-        env_prefix = 'ekklesia_notify_'
 
-
-class MailTransportSettings(BaseSettings):
+class MailTransportSettings(EkklesiaNotifySettings):
     """Settings for the mail transport"""
     cert_p12: FilePath
     cert_password: SecretStr
@@ -42,20 +41,14 @@ class MailTransportSettings(BaseSettings):
     smtp_server: str
     smtp_user: str
 
-    class Config:
-        env_prefix = 'ekklesia_notify_'
 
-
-class TransportSettings(BaseSettings):
+class TransportSettings(EkklesiaNotifySettings):
     """Settings for transports that are used to send out notifications."""
     mail: MailTransportSettings
     matrix: MatrixTransportSettings
 
-    class Config:
-        env_prefix = 'ekklesia_notify_'
 
-
-class EkklesiaNotifySettings(BaseSettings):
+class EkklesiaNotifySettings(EkklesiaNotifySettings):
     """Top-level settings object"""
 
     nacl_keys: dict[str, SecretStr]
@@ -64,6 +57,3 @@ class EkklesiaNotifySettings(BaseSettings):
     clients: dict[str, ClientSettings]
     recipient_info_transport_examples: dict
     template_dir: DirectoryPath
-
-    class Config:
-        env_prefix = 'ekklesia_notify_'
