@@ -18,6 +18,18 @@ let
 
   overrides = poetry2nix.overrides.withDefaults (
     self: super: {
+      aiosmtplib = super.aiosmtplib.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.poetry ];
+        }
+      );
+
+      matrix-nio = super.matrix-nio.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.poetry ];
+        }
+      );
+
       pykcs11 = super.pykcs11.overrideAttrs (
         old: rec {
           nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.swig ];
@@ -27,6 +39,12 @@ let
       python-olm = super.python-olm.overrideAttrs (
         old: rec {
           buildInputs = old.buildInputs ++ [ pkgs.olm ];
+        }
+      );
+
+      iso8601 = super.iso8601.overridePythonAttrs (
+        old: {
+          propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.poetry ];
         }
       );
 
